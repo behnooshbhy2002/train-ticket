@@ -59,61 +59,81 @@ def add(travel_date, travel_time):
     travel_dt = travel_date + ' ' + travel_time
     return travel_dt
 
-@register.filter(name="book")
-def book(travel_date, travel_time):
+# @register.filter(name="book")
+# def book(travel_date, travel_time):
 
-    travel_dt = add(travel_date, travel_time)
-    travel_ndt = datetime.strptime(travel_dt, '%Y-%m-%d %H:%M:%S')
-    # travel_dt = travel_dt.split()
-    # travel_d = travel_dt[0]
-    # travel_t = travel_dt[1]
+#     travel_dt = add(travel_date, travel_time)
+#     travel_ndt = datetime.strptime(travel_dt, '%Y-%m-%d %H:%M:%S')
+#     # travel_dt = travel_dt.split()
+#     # travel_d = travel_dt[0]
+#     # travel_t = travel_dt[1]
 
-    current_dt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    current_ndt = datetime.strptime(current_dt, '%Y-%m-%d %H:%M:%S')
-    # current_dt = str(current_dt)
-    # current_x = current_dt.split(".")
-    # current_ndt = current_x[0]
-    # current_ndt = str(current_ndt)
-    # current_xndt = datetime.strptime(current_ndt, '%Y-%m-%d %H:%M:%S')
+#     current_dt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#     current_ndt = datetime.strptime(current_dt, '%Y-%m-%d %H:%M:%S')
+#     # current_dt = str(current_dt)
+#     # current_x = current_dt.split(".")
+#     # current_ndt = current_x[0]
+#     # current_ndt = str(current_ndt)
+#     # current_xndt = datetime.strptime(current_ndt, '%Y-%m-%d %H:%M:%S')
 
-    # current_dt = str(current_dt)
-    # current_dt = current_dt.split()
-    # current_d = current_dt[0]
-    # current_t = current_dt[1]
+#     # current_dt = str(current_dt)
+#     # current_dt = current_dt.split()
+#     # current_d = current_dt[0]
+#     # current_t = current_dt[1]
     
-    # print(f"this is: {travel_ndt} and {current_dt}")
+#     # print(f"this is: {travel_ndt} and {current_dt}")
 
-    result = travel_ndt - current_ndt
-    print(result)
-    result = str(result)
-    result = result.split()
+#     result = travel_ndt - current_ndt
+#     print(result)
+#     result = str(result)
+#     result = result.split()
     
-    try:
-        d = result[0]
-        d = int(d)
-        print(f'this is {d}')
+#     try:
+#         d = result[0]
+#         d = int(d)
+#         print(f'this is {d}')
         
-        nt = result[2].split(":")
-        nth = nt[0]
-        t = int(nth)
-        print(f'this is {t}')
+#         nt = result[2].split(":")
+#         nth = nt[0]
+#         t = int(nth)
+#         print(f'this is {t}')
 
-        if (d >= 0 and t >= 1) or d > 0:
-            return True
-        else:
-            return False
+#         if (d >= 0 and t >= 1) or d > 0:
+#             return True
+#         else:
+#             return False
     
-    except: 
-        nt = result[0].split(":")
-        nth = nt[0]
-        t = int(nth)
-        print(f'except this is {t}')
-        if t >= 1:
-            return True
-        else:
-            return False
+#     except: 
+#         nt = result[0].split(":")
+#         nth = nt[0]
+#         t = int(nth)
+#         print(f'except this is {t}')
+#         if t >= 1:
+#             return True
+#         else:
+#             return False
 
-    # return travel_dt
+#     # return travel_dt
 
-    # except:
-    #     return redirect('home')
+#     # except:
+#     #     return redirect('home')
+
+
+@register.filter(name="book")
+def book(travel_date, departure_time):
+    """
+    Custom template tag to calculate booking availability.
+    """
+    if not travel_date or not departure_time:
+        return False  # Indicate that the train has already left
+
+    try:
+        # Combine the travel date and departure time into a single datetime
+        combined_datetime_str = f"{travel_date} {departure_time}"
+        combined_datetime = datetime.strptime(combined_datetime_str, '%Y-%m-%d %H:%M:%S')
+
+        # Compare with the current time
+        current_time = datetime.now()
+        return combined_datetime > current_time  # True if the train is still available
+    except ValueError as e:
+        return False

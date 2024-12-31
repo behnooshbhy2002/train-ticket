@@ -20,16 +20,62 @@ class Home(View):
         
 # available train page view
 
+# class AvailableTrain(View):
+#     def get(self, request):
+#         if request.GET:
+
+#             rfrom = request.GET.get('rfrom')
+#             to = request.GET.get('to')
+#             date = request.GET.get('date')
+#             ctype = request.GET.get('ctype')
+#             adult = request.GET.get('pa')
+#             child = request.GET.get('pc')
+
+#             adult = int(adult)
+#             child = int(child)
+
+#             if rfrom == '' or rfrom == 'Select' or to == '' or to == 'Select' \
+#                     or date == '' or date == 'mm//dd//yyyy' or ctype == '':
+#                 messages.warning(request, 'Please fillup the form properly')
+#                 return redirect('home')
+
+#             elif (adult + child) < 1:
+#                 messages.warning(request, 'Please book minimum 1 seat')
+#                 return redirect('home')
+
+#             elif (adult + child) > 5:
+#                 messages.warning(request, 'You can book maximum 5 seat')
+#                 return redirect('home')
+
+#             else:
+#                 search = Train.objects.filter(source=rfrom, destination=to, class_type=ctype)
+                
+#                 source = Station.objects.get(pk=rfrom)
+#                 destination = Station.objects.get(pk=to)
+#                 class_type = ClassType.objects.get(pk=ctype)
+                
+#                 return render(request, 'available_train.html', {'search': search, 'source':source, 'destination':destination, 'class_type':class_type})
+
+#         else:
+#             messages.warning(request, 'Find train first to get available train')
+#             return redirect('home')
+
 class AvailableTrain(View):
     def get(self, request):
         if request.GET:
-
             rfrom = request.GET.get('rfrom')
             to = request.GET.get('to')
             date = request.GET.get('date')
             ctype = request.GET.get('ctype')
             adult = request.GET.get('pa')
             child = request.GET.get('pc')
+
+            # print(f'{rfrom}')
+            # print(f'{to}')
+            # print(f'{date}')
+            # print(f'{ctype}')
+            # print(f'{adult}')
+            # print(f'{child}')
 
             adult = int(adult)
             child = int(child)
@@ -53,12 +99,21 @@ class AvailableTrain(View):
                 source = Station.objects.get(pk=rfrom)
                 destination = Station.objects.get(pk=to)
                 class_type = ClassType.objects.get(pk=ctype)
-                
-                return render(request, 'available_train.html', {'search': search, 'source':source, 'destination':destination, 'class_type':class_type})
+
+                # Log the context data
+                print(f"Context Data: search={search}, source={source}, destination={destination}, class_type={class_type}")
+
+                return render(request, 'available_train.html', {
+                    'search': search,
+                    'source': source,
+                    'destination': destination,
+                    'class_type': class_type
+                })
 
         else:
             messages.warning(request, 'Find train first to get available train')
             return redirect('home')
+
 
 
 #Booking page view

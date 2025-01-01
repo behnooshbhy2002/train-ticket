@@ -16,7 +16,8 @@ user_stories = [
     "As a user, I want to log in to my account so that I can access my profile and booking history.",
     "As a user, I want to cancel a booking if my plans change so that I can free up the reserved seats.",
     "As a user, I want to view train details such as departure time, arrival time, and class type so that I can make an informed decision.",
-    "As a user, I want to verify my ticket after I have obtained it, so that I can confirm its validity and ensure it is ready for use."
+    "As a user, I want to verify my ticket after I have obtained it, so that I can confirm its validity and ensure it is ready for use.",
+    "As a user, I want to submit feedback about the system or my experience so that I can share my opinion."
 ]
 
 

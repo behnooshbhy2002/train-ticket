@@ -1,12 +1,13 @@
-Feature: Verify Ticket
+Feature: Verify Ticket Validity
+  As a user, I want to verify my ticket after I have obtained it,
+  so that I can confirm its validity and ensure it is ready for use.
 
-Scenario: Successful Ticket Verification
-    Given I have successfully obtained a ticket
-    When I verify the ticket
-    Then the ticket status should be "Valid"
-    And the ticket details should be displayed correctly
+  Scenario: Valid Ticket Verification
+    Given I have a valid ticket in the system
+    When I verify the ticket using its details
+    Then I see the ticket's validity confirmed with its details displayed
 
-  Scenario: Failed Ticket Verification
-    Given I have obtained a ticket with an invalid status
-    When I verify the ticket
-    Then an error message should be displayed indicating the ticket is invalid
+  Scenario: Invalid Ticket Verification
+    Given I do not have a valid ticket in the system
+    When I attempt to verify a ticket with invalid details
+    Then I see an error message indicating the ticket is invalid

@@ -54,5 +54,3 @@ python manage.py runserver
 
 ### 🎉 4. Enjoy the Project!  
 That’s it! Open your browser, navigate to the provided localhost URL, and explore the **Online Railway Ticket Booking System**. 🚂✨  
-
-```

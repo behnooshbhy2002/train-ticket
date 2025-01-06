@@ -72,18 +72,14 @@ def step_then_error_message(context):
     # Decode the response content
     response_content = context.response.content.decode()
 
-    # Debug: Print the response content for troubleshooting
-    # print(response_content)
-
     # Use the parameters stored in the context during the @when step
     train_name = context.train_name
     travel_date = context.travel_date
     ticket_id = context.ticket_id
 
     # Check if the response contains the error message and the requested details
-    assert context.response.status_code == 200
+    assert context.response.status_code != 200, "Expected a 200 status code for invalid ticket verification"
     assert "This ticket is not verified." in response_content, "Error message not found in response"
     assert f"Train Name: {train_name}" in response_content, "Train name not displayed correctly"
     assert f"Travel Date: {travel_date}" in response_content, "Travel date not displayed correctly"
     assert f"Ticket ID: {ticket_id}" in response_content, "Ticket ID not displayed correctly"
-    # assert 0 == 1

@@ -1,3 +1,5 @@
+In my test:
+# Test code
 from behave import given, when, then
 from django.test.client import Client
 from app.models import Ticket
@@ -86,4 +88,38 @@ def step_then_error_message(context):
     assert f"Train Name: {train_name}" in response_content, "Train name not displayed correctly"
     assert f"Travel Date: {travel_date}" in response_content, "Travel date not displayed correctly"
     assert f"Ticket ID: {ticket_id}" in response_content, "Ticket ID not displayed correctly"
-    # assert 0 == 1
+    assert 0 == 1
+I have this error:
+# Error message
+USING RUNNER: behave.runner:Runner
+Feature: Verify Ticket Validity # app/features/ticket_verification.feature:1
+  As a user, I want to verify my ticket after I have obtained it,
+  so that I can confirm its validity and ensure it is ready for use.
+  Scenario: Valid Ticket Verification                                     # app/features/ticket_verification.feature:5
+    Given I have a valid ticket in the system                             # app/features/steps/verify_ticket_steps.py:9
+    When I verify the ticket using its details                            # app/features/steps/verify_ticket_steps.py:27
+    Then I see the ticket's validity confirmed with its details displayed # app/features/steps/verify_ticket_steps.py:58
+
+  Scenario: Invalid Ticket Verification                          # app/features/ticket_verification.feature:10
+    Given I do not have a valid ticket in the system             # app/features/steps/verify_ticket_steps.py:22
+    When I attempt to verify a ticket with invalid details       # app/features/steps/verify_ticket_steps.py:44
+    Then I see an error message indicating the ticket is invalid # app/features/steps/verify_ticket_steps.py:70
+      Traceback (most recent call last):
+        File "C:\Users\behnoosh\AppData\Local\Programs\Python\Python312\Lib\site-packages\behave\model.py", line 1909, in run
+          match.run(runner.context)
+        File "C:\Users\behnoosh\AppData\Local\Programs\Python\Python312\Lib\site-packages\behave\matchers.py", line 104, in run
+          self.func(context, *args, **kwargs)
+        File "app\features\steps\verify_ticket_steps.py", line 89, in step_then_error_message
+          assert 0 == 1
+                 ^^^^^^
+      AssertionError
+
+
+
+Failing scenarios:
+  app/features/ticket_verification.feature:10  Invalid Ticket Verification
+
+0 features passed, 1 failed, 0 skipped
+1 scenario passed, 1 failed, 0 skipped
+5 steps passed, 1 failed, 0 skipped
+Took 0m0.058s

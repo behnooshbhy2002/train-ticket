@@ -1,49 +1,56 @@
 from behave import given, when, then
+from django.contrib.auth import get_user_model
+from app.models import Booking, Ticket
+from django.test.client import Client
+import uuid
+from datetime import time  # Import for handling time fields
 
-# فرض کنید که یک کلاس برای رزروهای شما وجود دارد.
-class BookingSystem:
-    def __init__(self):
-        self.bookings = {}
-        self.seats_available = 100  # فرض کنید که 100 صندلی موجود است
+# Get the custom user model
+CustomUser = get_user_model()
 
-    def make_booking(self, user_id, event):
-        if self.seats_available > 0:
-            self.bookings[user_id] = event
-            self.seats_available -= 1
-            return True
-        return False
+@given("I have a confirmed booking")
+def step_given_confirmed_booking(context):
+    # Create a test user with a unique username and email, and log them in
+    context.client = Client()
+    unique_username = f"testuser_{uuid.uuid4().hex[:8]}"  # Generate a unique username
+    unique_email = f"{unique_username}@example.com"  # Generate a unique email based on the username
+    context.user = CustomUser.objects.create_user(
+        username=unique_username,
+        password="testpassword",
+        email=unique_email
+    )
+    context.client.login(username=unique_username, password="testpassword")
+    
+    # Create a confirmed booking for the user
+    context.booking = Booking.objects.create(user=context.user, travel_date="2025-01-10")
+    context.ticket = Ticket.objects.create(
+        booking=context.booking,
+        user=context.user,
+        train_name="Test Train",
+        source="Station A",
+        destination="Station B",
+        travel_date="2025-01-10",
+        departure=time(10, 0),  # Use datetime.time for valid time format
+        class_type="Economy",
+        fare=100
+    )
 
-    def cancel_booking(self, user_id):
-        if user_id in self.bookings:
-            event = self.bookings.pop(user_id)
-            self.seats_available += 1
-            return True
-        return False
+@when("I cancel the booking")
+def step_when_cancel_booking(context):
+    # Send a POST request to cancel the booking with a simulated referer
+    context.response = context.client.post(
+        "/cancel_booking", 
+        {"booking_id": context.booking.id},
+        HTTP_REFERER="/dashboard/"  # Simulating a referring page to avoid KeyError
+    )
 
+@then("the booking should be cancelled")
+def step_then_booking_cancelled(context):
+    # Check that the booking no longer exists
+    assert not Booking.objects.filter(id=context.booking.id).exists()
 
-# ایجاد یک شی از سیستم رزرو
-booking_system = BookingSystem()
-
-@given('I have made a booking for a specific event')
-def step_impl(context):
-    # فرض کنید که شما یک رزرو برای رویداد "Concert" انجام داده‌اید
-    context.user_id = "user123"
-    context.event = "Concert"
-    booking_system.make_booking(context.user_id, context.event)
-
-@given('my plans have changed')
-def step_impl(context):
-    # فرض می‌کنیم که برنامه‌های کاربر تغییر کرده است
-    context.plans_changed = True
-
-@when('I attempt to cancel the booking')
-def step_impl(context):
-    # لغو رزرو
-    context.result = booking_system.cancel_booking(context.user_id)
-
-@then('the booking should be cancelled and the seats should be freed up')
-def step_impl(context):
-    # بررسی که رزرو لغو شده و صندلی‌ها آزاد شده‌اند
-    assert context.result is True
-    assert booking_system.seats_available == 100  # صندلی‌ها باید به حالت اولیه برگشته باشند
-    assert context.user_id not in booking_system.bookings  # رزرو باید لغو شده باشد
+@then("booking shouldn't show in my booking history anymore")
+def step_then_booking_not_in_history(context):
+    # Check that the booking is not in the user's booking history
+    response = context.client.get("/booking_history")
+    assert str(context.booking.id) not in response.content.decode()

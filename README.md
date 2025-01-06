@@ -1,5 +1,3 @@
-Here’s the updated README content in **Markdown** format:
-
 # 🚂 Online Railway Ticket Booking System 🚉
 
 ### ✨ Description  
